@@ -1,0 +1,97 @@
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+
+# Caminho para o ChromeDriver
+chrome_driver_path = r"C:\Users\barro\OneDrive\Área de Trabalho\Nova pasta\chromedriver-win64\chromedriver.exe"
+
+# Acesso ao My Maps com login e senha
+email = "testemymaps0@gmail.com"
+senha = "Testemymaps040924"
+
+# URL do mapa, nesse exemplo o projeto "Pontos Cachambi"
+mapa_url = "https://www.google.com/maps/d/u/4/edit?hl=pt-BR&mid=1dg-9S5LVpCxyY2yzYDfUCCs8UoPJlpM&ll=-22.891511991710665%2C-43.27817489999999&z=18"
+
+# Config do navegador
+chrome_options = Options()
+chrome_options.add_argument("--start-maximized")  # Inicia o navegador maximizado
+
+# WebDriver
+service = Service(chrome_driver_path)
+driver = webdriver.Chrome(service=service, options=chrome_options)
+
+# Acesso ao login
+driver.get("https://accounts.google.com/signin")
+
+# Espera de 10 segundos para o campo de e-mail, pode aumentar se necessário
+wait = WebDriverWait(driver, 10)
+email_input = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="identifierId"]')))
+email_input.send_keys(email)
+email_input.send_keys(Keys.ENTER)
+
+# Transição para a página de senha
+wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="password"]')))
+
+# Preenchimento do campo de senha
+password_input = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@name="Passwd"]')))
+password_input.send_keys(senha)
+password_input.send_keys(Keys.ENTER)
+
+# Espera de acesso do login, pode aumentar o tempo se necessário
+time.sleep(5)
+
+# Acesso ao mapa "Pontos Cachambi"
+driver.get(mapa_url)
+
+# Execução do código
+try:
+    # Passo 1: Clique no botão "Opções da Camada"
+    layer_options_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".un1lmc-j4gsHd")))
+    layer_options_button.click()
+
+    # Passo 2: Clique no primeiro item
+    first_item = wait.until(EC.element_to_be_clickable((By.ID, ":1m")))
+    first_item.click()
+
+    # Passo 3: Clique no segundo item
+    second_item = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#\\3A 1h > .VIpgJd-j7LFlb-bN97Pc")))
+    second_item.click()
+
+    # Passo 4: Clique no terceiro item
+    third_item = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#\\3A 1f > .VIpgJd-j7LFlb-bN97Pc")))
+    third_item.click()
+
+    # Passo 5: Seleção do frame
+    wait.until(EC.frame_to_be_available_and_switch_to_it((By.XPATH, '(//iframe)[6]')))  # Ajuste o índice se necessário
+
+    # Passo 6: Clique no botão de dentro do frame
+    button_in_frame = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#\\31 > .VfPpkd-YVzG2b")))
+    button_in_frame.click()
+
+    # Passo 7: Clique de acesso
+    desired_option = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".PpTbs:nth-child(2)")))
+    desired_option.click()
+
+    # Passo 8: Clique no botão "Inserir"
+    # Aguardar o frame estar pronto e clicar no botão "Inserir"
+    insert_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".eizQhe-ObfsIf-mJRMzd-PFprWc-YbohUe-VtOx3e")))
+    insert_button.click()
+
+    # Passo 9: Clique no botão "Inserir" adicional
+    additional_insert_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".VfPpkd-vQzf8d")))
+    additional_insert_button.click()
+
+except Exception as e:
+    print(f"Ocorreu um erro: {e}")
+
+# Manter a janela aberta até pressionar Enter
+input("Pressione Enter para fechar o navegador...")
+
+# Fecha o navegador
+driver.quit()
+
